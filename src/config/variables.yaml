@@ -2,3 +2,6 @@ data_parameters:
   datasets_path: dbfs:/mnt/dbacademy-datasets/generative-ai-solution-development/v01/arxiv-articles/
   catalog_name: hemzai
   bronze_schema_name: bronze
+  silver_schema_name: silver
+  gold_schema_name: gold
+  pdf_raw_table_name: pdf_raw_text

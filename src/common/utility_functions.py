@@ -1,7 +1,56 @@
+import io
+import logging
+from typing import List
 from databricks.sdk.runtime import *
 from pyspark.sql.utils import AnalysisException
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import (
+    Docx2txtLoader,
+    PyPDFLoader,
+    TextLoader,
+    UnstructuredMarkdownLoader,
+)
+from langchain_core.documents import Document
+from pypdf import PdfReader
 
-def read_data_unfound_handled(schema, format, external_path):
+# Creating an object
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
+
+# Load Data
+def load_data(file_type: str, file_loc: str) -> List[Document]:
+    try:
+        """Load data into a list of Documents
+        Args:
+            file_type: the type of file to load
+        Returns:    list of Documents
+        """
+        if file_type == "PDF":
+            loader = PyPDFLoader(file_loc)
+            data = loader.load()
+
+        elif file_type == "Text":
+            loader = TextLoader(r"{}".format(file_loc))
+            data = loader.load()
+
+        elif file_type == "DOCX":
+            loader = Docx2txtLoader(file_loc)
+            data = loader.load()
+
+        elif file_type == "Markdown":
+            loader = UnstructuredMarkdownLoader(file_loc)
+            data = loader.load()
+        logger.info(f"Loaded the {file_type} Document from {file_loc}")
+
+        return data
+
+    except Exception as e:
+        logger.error(f"An error occurred in load_data: {str(e)}")
+        raise SystemExit(f"Exiting due to the error: {str(e)}")
+
+
+def read_data_handler(format, schema=None, external_path=None, table_name=None):
     """
     Attempt to read data from external path.
     If path is not found, create an empty dataframe with the given schema and write it to the external path.
@@ -15,10 +64,10 @@ def read_data_unfound_handled(schema, format, external_path):
     try:
         if format == "parquet":
             df = spark.read.schema(schema).format(format).load(external_path)
-        elif format == "binaryfile":
-            df = spark.read.format(format).option("recursiveFileLookup", "true").load(external_path)
         elif format == "delta":
             df = spark.read.format(format).load(external_path)
+        elif format == "del_table":
+            df = spark.read.table(table_name)
     except AnalysisException as e:
         if ("[PATH_NOT_FOUND]" in str(e)) and (schema is not None):
             raise "Provide a proper external path "
@@ -26,46 +75,48 @@ def read_data_unfound_handled(schema, format, external_path):
             raise "Provide a schema to create an empty dataframe"
         else:
             raise e
+
     except Exception as e:
         raise e
 
     return df
 
 
-def read_table(table_name, logger):
-    """
-    Reads a table from the Spark session and logs the process.
-
-    Args:
-        logger: The logger object for logging information and errors.
-        table_name: The name of the table to be read.
-
-    Returns:
-        A DataFrame containing the data read from the specified table.
-
-    Raises:
-        SystemExit: If an error occurs while reading the table.
-    """
-    try:
-        logger.info(f"Reading the data from {table_name}")
-        table_df = spark.read.table(table_name)
-        logger.info(f"Completed reading the data from {table_name}")
-        # logger.info(f"Count of records in table {table_name}: {table_df.count()}")
-        return table_df
-    except Exception as read_data_error:
-        print(f"An error occurred while reading data: {str(read_data_error)}")
-        raise SystemExit(f"Exiting due to the error: {str(read_data_error)}")
-
-
 def write_data_to_delta(df, mode, external_path, table_name):
-    # Extract database/schema namefor Unity Catalog.
-    schema = table_name.split(".")[1]
-    spark.sql("CREATE DATABASE IF NOT EXISTS " + schema)
-    if external_path is not None:
-        df.write.format("delta").mode(mode).option("overwriteSchema", "false").option(
-            "path", external_path
-        ).saveAsTable(table_name)
-    elif external_path is None:
-        df.write.format("delta").mode(mode).option(
-            "overwriteSchema", "false"
-        ).saveAsTable(table_name)
+    try: 
+        # Extract database/schema namefor Unity Catalog.
+        schema = table_name.split(".")[1]
+        spark.sql("CREATE DATABASE IF NOT EXISTS " + schema)
+        if external_path is not None:
+            df.write.format("delta").mode(mode).option("overwriteSchema", "false").option(
+                "path", external_path
+            ).saveAsTable(table_name)
+        elif external_path is None:
+            df.write.format("delta").mode(mode).option(
+                "overwriteSchema", "false"
+            ).saveAsTable(table_name)
+
+    except Exception as e:
+        logger.error(f"An error occurred in load_data: {str(e)}")
+        raise SystemExit(f"Exiting due to the error: {str(e)}")
+
+
+def write_data_with_cdc(df, mode, external_path, table_name):
+    try: 
+        # Extract database/schema namefor Unity Catalog.
+        schema = table_name.split(".")[1]
+        spark.sql("CREATE DATABASE IF NOT EXISTS " + schema)
+        if external_path is not None:
+            df.write.format("delta").mode(mode).option("delta.enableChangeDataFeed", "true")
+            .option("overwriteSchema", "false").option(
+                "path", external_path
+            ).saveAsTable(table_name)
+        elif external_path is None:
+            # Write the empty DataFrame to create the Delta table with CDC enabled
+            df.write.format("delta").mode(mode).option("delta.enableChangeDataFeed", "true").option(
+                "overwriteSchema", "false"
+            ).saveAsTable(table_name)
+
+    except Exception as e:
+        logger.error(f"An error occurred in load_data: {str(e)}")
+        raise SystemExit(f"Exiting due to the error: {str(e)}")

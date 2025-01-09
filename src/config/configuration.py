@@ -13,3 +13,4 @@ with open(varaiable_yaml_path, "r") as file:
 datasets_path = config.get("data_parameters")["datasets_path"]
 catalog_name = config.get("data_parameters")["catalog_name"]
 bronze_schema_name = config.get("data_parameters")["bronze_schema_name"]
+pdf_raw_table_name = config.get("data_parameters")["pdf_raw_table_name"]
