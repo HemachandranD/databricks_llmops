@@ -4,7 +4,7 @@ import pandas as pd
 from typing import List, Iterator
 from pyspark.sql.functions import explode, pandas_udf
 from src.common.utility_functions import read_data_handler, write_data_with_cdc
-from src.config.configuration import catalog_name, bronze_schema_name, silver_schema_name, pdf_chunks_table_name, pdf_embeddings_table_name
+from src.config.configuration import catalog_name, bronze_schema_name, silver_schema_name, gold_schema_name, pdf_chunks_table_name, pdf_embeddings_table_name
 
 
 @pandas_udf("array<float>")
@@ -28,7 +28,7 @@ def get_embedding(contents: pd.Series) -> pd.Series:
 
 
 if __name__ == "__main__":
-    embeddings_fqn = f"{catalog_name}.{silver_schema_name}.{pdf_embeddings_table_name}"
+    embeddings_fqn = f"{catalog_name}.{gold_schema_name}.{pdf_embeddings_table_name}"
  
     df_chunks = read_data_handler(format="del_table", schema=None, external_path=None, table_name=f"{catalog_name}.{silver_schema_name}.{pdf_chunks_table_name}")
 
