@@ -107,15 +107,15 @@ def write_data_with_cdc(df, mode, external_path, table_name):
         schema = table_name.split(".")[1]
         spark.sql("CREATE DATABASE IF NOT EXISTS " + schema)
         if external_path is not None:
-            df.write.format("delta").mode(mode).option("delta.enableChangeDataFeed", "true")
-            .option("overwriteSchema", "false").option(
-                "path", external_path
-            ).saveAsTable(table_name)
+            df.write.format("delta").mode(mode).option("delta.enableChangeDataFeed", "true")\
+                .option("overwriteSchema", "false")\
+                    .option("path", external_path)\
+                        .saveAsTable(table_name)
         elif external_path is None:
             # Write the empty DataFrame to create the Delta table with CDC enabled
-            df.write.format("delta").mode(mode).option("delta.enableChangeDataFeed", "true").option(
-                "overwriteSchema", "false"
-            ).saveAsTable(table_name)
+            df.write.format("delta").mode(mode).option("delta.enableChangeDataFeed", "true")\
+                .option("overwriteSchema", "false" )\
+                    .saveAsTable(table_name)
 
     except Exception as e:
         logger.error(f"An error occurred in load_data: {str(e)}")

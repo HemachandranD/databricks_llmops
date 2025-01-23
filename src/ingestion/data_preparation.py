@@ -1,6 +1,10 @@
+import os
+import sys
+sys.path.append(os.getcwd().rsplit("/src")[0])
+
 from pyspark.sql.functions import *
 from src.config.configuration import datasets_path, catalog_name, bronze_schema_name, pdf_raw_table_name
-from src.common.utility_functions import read_data_unfound_handled, write_data_to_delta
+from src.common.utility_functions import read_data_handler, write_data_to_delta
 
 
 # Reduce the arrow batch size as our PDF can be big in memory
