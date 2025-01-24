@@ -1,4 +1,3 @@
-import logging
 import mlflow.deployments
 import pandas as pd
 from typing import List, Iterator
