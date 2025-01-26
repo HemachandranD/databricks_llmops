@@ -1,5 +1,6 @@
 import io
 import time
+import mlflow
 from typing import List
 from databricks.sdk.runtime import *
 from pyspark.sql.utils import AnalysisException
@@ -169,3 +170,33 @@ def wait_for_index_to_be_ready(vsc, vs_endpoint_name, index_name):
         else:
             raise Exception(f'''Error with the index - this shouldn't happen. DLT pipeline might have been killed.\n Please delete it and re-run the previous cell: vsc.delete_index("{index_name}, {vs_endpoint_name}") \nIndex details: {idx}''')
     raise Exception(f"Timeout, your index isn't ready yet: {vsc.get_index(index_name, vs_endpoint_name)}")
+
+
+def get_latest_model_version(func):
+    """
+    Helper method to programmatically get latest model's version from the registry
+    """
+    def wrapper(model_name):
+        """
+        Wrapper to fetch the latest model version before executing the main function.
+        """
+        client = mlflow.tracking.MlflowClient()
+        model_version_infos = client.search_model_versions("name = '%s'" % model_name)
+        latest_version = max(
+            [model_version_info.version for model_version_info in model_version_infos]
+        )
+        # Call the original function with the latest version
+        return func(model_name, latest_version)
+
+    return wrapper
+
+
+@get_latest_model_version
+def set_alias(model_name, current_model_version):
+    # Set @alias to the latest model version
+    mlflow.tracking.MlflowClient().set_registered_model_alias(
+        name=model_name, alias="champion",
+        version=current_model_version
+        )
+    
+    return current_model_version

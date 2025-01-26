@@ -11,3 +11,5 @@ data_parameters:
   pdf_self_managed_vector_index_name : pdf_text_self_managed_vs_index
   pdf_managed_vector_index_name : pdf_text_managed_vs_index
   chain_model_name: hemz-pilot-chain
+  scope_name: hemzai_scope
+  serving_endpoint_name: hemzai_pilot_endpoint

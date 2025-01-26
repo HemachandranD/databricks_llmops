@@ -22,3 +22,5 @@ vector_search_endpoint_sub_name = config.get("data_parameters")["vector_search_e
 pdf_self_managed_vector_index_name = config.get("data_parameters")["pdf_self_managed_vector_index_name"]
 pdf_managed_vector_index_name = config.get("data_parameters")["pdf_managed_vector_index_name"]
 chain_model_name = config.get("data_parameters")["chain_model_name"]
+scope_name = config.get("data_parameters")["scope_name"]
+serving_endpoint_name = config.get("data_parameters")["serving_endpoint_name"]
