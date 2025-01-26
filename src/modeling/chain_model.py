@@ -3,7 +3,11 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda
 from langchain_community.chat_models import ChatDatabricks
+from mlflow.models.resources import (
+    DatabricksVectorSearchIndex,
+    DatabricksServingEndpoint,)
 from mlflow.models import infer_signature
+from datetime import datetime
 import mlflow
 import langchain
 
@@ -16,6 +20,13 @@ def save_chain_model(chain, catalog_name, schema_name, chain_model_name, questio
     mlflow.set_registry_uri("databricks-uc")
     model_name = f"{catalog_name}.{schema_name}.{chain_model_name}"
 
+    # Set experiment path
+    t = datetime.now()
+    date_now = t.strftime("%Y-%m-%d")
+    time_now = t.strftime("%H%M%S")
+    experiment_name = f"/Workspace/Experiments/{date_now}/{time_now}/{chain_model_name}"
+    mlflow.set_experiment(experiment_name)
+
     with mlflow.start_run(run_name=chain_model_name) as run:
         signature = infer_signature(question, answer)
         model_info = mlflow.langchain.log_model(
@@ -26,11 +37,19 @@ def save_chain_model(chain, catalog_name, schema_name, chain_model_name, questio
             pip_requirements=[
                 "mlflow==" + mlflow.__version__,
                 "langchain==" + langchain.__version__,
-                "databricks-vectorsearch",
+                "langchain-community==0.3.14",
+                "databricks-vectorsearch==0.40",
+                "flashrank==0.2.8",
+            ],
+            resources=[
+            DatabricksVectorSearchIndex(index_name="hemzai.gold.pdf_text_self_managed_vs_index"),
+            DatabricksServingEndpoint(endpoint_name="databricks-meta-llama-3-1-70b-instruct"),
             ],
             input_example=question,
             signature=signature
         )
+
+    return model_info
 
 
 def create_prompt():
@@ -66,5 +85,6 @@ if __name__ == "__main__":
 
     question = {"input": "How does Generative AI impact humans?"}
     answer = chain.invoke(question)
-    print(answer)
-    save_chain_model(chain=chain, catalog_name=catalog_name, schema_name=gold_schema_name, chain_model_name=chain_model_name, question=question, answer=answer)
+    # print(answer)
+    model_info = save_chain_model(chain=chain, catalog_name=catalog_name, schema_name=gold_schema_name, chain_model_name=chain_model_name, question=question, answer=answer)
+    
