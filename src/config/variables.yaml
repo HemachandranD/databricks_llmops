@@ -13,3 +13,15 @@ data_parameters:
   chain_model_name: hemz-pilot-chain
   scope_name: hemzai_scope
   serving_endpoint_name: hemzai_pilot_endpoint
+  app_inference_table_name: rag_app_realtime_payload
+  app_inference_processed_table_name: rag_app_metrics_realtime
+  # The format of the input payloads, following the TF "inputs" serving format with a "query" field.
+  # Single query input format: {"inputs": [{"query": "User question?"}]}
+  input_request_json_path: "inputs[*].input"
+  # Matches the schema returned by the JSON selector (inputs[*].query is an array of string)
+  input_json_path_type: "array<string>"
+  keep_last_question: False
+  # Answer format: {"predictions": ["answer"]}
+  output_request_json_path: "predictions"
+  # Matches the schema returned by the JSON selector (predictions is an array of string)
+  output_json_path_type: "array<string>"

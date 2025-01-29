@@ -3,7 +3,10 @@ import time
 import mlflow
 from typing import List
 from databricks.sdk.runtime import *
+from pyspark.sql import DataFrame
 from pyspark.sql.utils import AnalysisException
+from pyspark.sql import functions as F
+from pyspark.sql.functions import explode, col
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import (
     Docx2txtLoader,
@@ -200,3 +203,44 @@ def set_alias(model_name, current_model_version):
         )
     
     return current_model_version
+
+
+def unpack_requests(requests_raw: DataFrame, 
+                    input_request_json_path: str, 
+                    input_json_path_type: str, 
+                    output_request_json_path: str, 
+                    output_json_path_type: str,
+                    keep_last_question_only: False) -> DataFrame:
+    # Rename the date column and convert the timestamp milliseconds to TimestampType for downstream processing.
+    requests_timestamped = (requests_raw
+        .withColumn("timestamp", (col("timestamp_ms") / 1000))
+        .drop("timestamp_ms"))
+
+    # Convert the model name and version columns into a model identifier column.
+    requests_identified = requests_timestamped.withColumn(
+        "model_id",
+        F.concat(
+            col("request_metadata").getItem("model_name"),
+            F.lit("_"),
+            col("request_metadata").getItem("model_version")
+        )
+    )
+
+    # Filter out the non-successful requests.
+    requests_success = requests_identified.filter(col("status_code") == "200")
+
+    # Unpack JSON.
+    requests_unpacked = (requests_success
+        .withColumn("request", F.from_json(F.expr(f"request:{input_request_json_path}"), input_json_path_type))
+        .withColumn("response", F.from_json(F.expr(f"response:{output_request_json_path}"), output_json_path_type)))
+    
+    if keep_last_question_only:
+        requests_unpacked = requests_unpacked.withColumn("request", F.array(F.element_at(F.col("request"), -1)))
+
+    # Explode batched requests into individual rows.
+    requests_exploded = (requests_unpacked
+        .withColumn("__db_request_response", F.explode(F.arrays_zip(col("request").alias("input"), col("response").alias("output"))))
+        .selectExpr("* except(__db_request_response, request, response, request_metadata)", "__db_request_response.*")
+        )
+
+    return requests_exploded

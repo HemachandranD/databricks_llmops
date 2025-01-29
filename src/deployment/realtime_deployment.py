@@ -1,7 +1,7 @@
 import mlflow
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.serving import EndpointCoreConfigInput
-from src.config.configuration import catalog_name, gold_schema_name, chain_model_name, scope_name, serving_endpoint_name
+from src.config.configuration import catalog_name, gold_schema_name, chain_model_name, scope_name, serving_endpoint_name, app_inference_table_name
 from src.common.utility_functions import set_alias
 from src.config.endpoint_config import load_endpoint_config
 
@@ -9,7 +9,7 @@ from src.config.endpoint_config import load_endpoint_config
 def get_ready_for_realtime_inference(model_name):
     
     latest_model_version = set_alias(model_name=model_name)
-    endpoint_config_dict = load_endpoint_config(catalog_name, gold_schema_name, model_name, latest_model_version, scope_name)
+    endpoint_config_dict = load_endpoint_config(catalog_name, gold_schema_name, app_inference_table_name, model_name, latest_model_version, scope_name)
     endpoint_config = EndpointCoreConfigInput.from_dict(endpoint_config_dict)
 
     return latest_model_version, endpoint_config

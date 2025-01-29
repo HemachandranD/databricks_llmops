@@ -1,5 +1,6 @@
 
-def load_endpoint_config(catalog_name, gold_schema_name, model_name, latest_model_version, scope_name):
+
+def load_endpoint_config(catalog_name, gold_schema_name, app_inference_table_name, model_name, latest_model_version, scope_name):
 
     # Configure the endpoint
     endpoint_config_dict = {
@@ -20,7 +21,7 @@ def load_endpoint_config(catalog_name, gold_schema_name, model_name, latest_mode
         "auto_capture_config":{
             "catalog_name": catalog_name,
             "schema_name": gold_schema_name,
-            "table_name_prefix": "rag_app_realtime"
+            "table_name_prefix": app_inference_table_name
         }
     }
 
