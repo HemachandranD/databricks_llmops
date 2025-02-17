@@ -47,12 +47,12 @@ def get_retriever(vs_endpoint_name, vs_index_fullname, cache_dir="/tmp"):
     return RunnableLambda(retrieve) | RunnableLambda(lambda x: rerank(x[0], x[1], cache_dir))
 
 
-if __name__ == "__main__":
-    vs_endpoint_prefix = "vs_endpoint_"
-    vs_endpoint_name = vs_endpoint_prefix+str(vector_search_endpoint_sub_name)
+# if __name__ == "__main__":
+#     vs_endpoint_prefix = "vs_endpoint_"
+#     vs_endpoint_name = vs_endpoint_prefix+str(vector_search_endpoint_sub_name)
 
-    # test our retriever
-    question = {"input": "How does Generative AI impact humans?"}
-    retriever = get_retriever(vs_endpoint_name=vs_endpoint_name, vs_index_fullname=f"{catalog_name}.{gold_schema_name}.{pdf_self_managed_vector_index_name}")
-    similar_documents = retriever.invoke(question)
-    print(f"Relevant documents: {similar_documents}")
+#     # test our retriever
+#     question = {"input": "How does Generative AI impact humans?"}
+#     retriever = get_retriever(vs_endpoint_name=vs_endpoint_name, vs_index_fullname=f"{catalog_name}.{gold_schema_name}.{pdf_self_managed_vector_index_name}")
+#     similar_documents = retriever.invoke(question)
+#     print(f"Relevant documents: {similar_documents}")

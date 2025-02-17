@@ -1,7 +1,7 @@
 import os
 import sys
 from pyspark.sql import SparkSession
-spark = SparkSession.builder.appName('Build Model').getOrCreate()
+spark = SparkSession.builder.appName('Prepare RAG Data').getOrCreate()
 
 from pyspark.sql.functions import explode
 sys.path.append(os.getcwd().rsplit("/src")[0])
