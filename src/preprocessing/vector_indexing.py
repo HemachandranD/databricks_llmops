@@ -43,26 +43,26 @@ def managed_vector_index(vector_client, vs_endpoint_name, vs_index_fullname, sou
         vector_client.get_index(vs_endpoint_name, vs_index_fullname).sync()
 
 
-if __name__ == "__main__":
-    vector_client = VectorSearchClient(disable_notice=True)
+# if __name__ == "__main__":
+#     vector_client = VectorSearchClient(disable_notice=True)
 
-    vs_endpoint_prefix = "vs_endpoint_"
-    vs_endpoint_name = vs_endpoint_prefix+str(vector_search_endpoint_sub_name)
+#     vs_endpoint_prefix = "vs_endpoint_"
+#     vs_endpoint_name = vs_endpoint_prefix+str(vector_search_endpoint_sub_name)
 
-    if (vs_endpoint_name not in [e["name"] for e in vector_client.list_endpoints()["endpoints"]]) or (vector_client.list_endpoints()==''):
-        vector_client.create_endpoint(name=vs_endpoint_name, endpoint_type="STANDARD")
-        # check the status of the endpoint
-        wait_for_vs_endpoint_to_be_ready(vector_client, vs_endpoint_name)
-        print(f"Endpoint named {vs_endpoint_name} is ready.")
+#     if (vs_endpoint_name not in [e["name"] for e in vector_client.list_endpoints()["endpoints"]]) or (vector_client.list_endpoints()==''):
+#         vector_client.create_endpoint(name=vs_endpoint_name, endpoint_type="STANDARD")
+#         # check the status of the endpoint
+#         wait_for_vs_endpoint_to_be_ready(vector_client, vs_endpoint_name)
+#         print(f"Endpoint named {vs_endpoint_name} is ready.")
     
-    # the table we'd like to index
-    source_table_fullname = f"{catalog_name}.{gold_schema_name}.{pdf_embeddings_table_name}"
+#     # the table we'd like to index
+#     source_table_fullname = f"{catalog_name}.{gold_schema_name}.{pdf_embeddings_table_name}"
 
-    # the table t to store index
-    vs_index_fullname = f"{catalog_name}.{gold_schema_name}.{pdf_self_managed_vector_index_name}"
+#     # the table t to store index
+#     vs_index_fullname = f"{catalog_name}.{gold_schema_name}.{pdf_self_managed_vector_index_name}"
 
-    # # create the self managed vector index
-    # self_managed_vector_index(vector_client, vs_endpoint_name, vs_index_fullname, source_table_fullname)
+#     # create the self managed vector index
+#     self_managed_vector_index(vector_client, vs_endpoint_name, vs_index_fullname, source_table_fullname)
 
-    # create manged vectr index
-    managed_vector_index(vector_client, vs_endpoint_name, f"{catalog_name}.{gold_schema_name}.{pdf_managed_vector_index_name}", source_table_fullname)
+#     # create manged vector index
+#     # managed_vector_index(vector_client, vs_endpoint_name, f"{catalog_name}.{gold_schema_name}.{pdf_managed_vector_index_name}", source_table_fullname)

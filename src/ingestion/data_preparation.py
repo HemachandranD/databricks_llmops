@@ -3,19 +3,29 @@ import sys
 sys.path.append(os.getcwd().rsplit("/src")[0])
 
 from pyspark.sql.functions import *
-from src.config.configuration import datasets_path, catalog_name, bronze_schema_name, pdf_raw_table_name
+from pyspark.sql import SparkSession
 from src.common.utility_functions import read_data_handler, write_data_to_delta
+from src.config.configuration import datasets_path, catalog_name, bronze_schema_name, pdf_raw_table_name
 
+# Get a active session
+spark = SparkSession.getActiveSession()
 
 # Reduce the arrow batch size as our PDF can be big in memory
 spark.conf.set("spark.sql.execution.arrow.maxRecordsPerBatch", 10)
 
 
-if __name__ == "__main__":
-    table_name = f"{catalog_name}.{bronze_schema_name}.{pdf_raw_table_name}"
+def process_pdf_files(datasets_path, catalog_name, schema_name, raw_table_name):
+    """Function to process PDF files and write them to Delta tables."""
+    table_name = f"{catalog_name}.{schema_name}.{raw_table_name}"
 
-    # read files
-    df = spark.read.format('binaryfile').option("recursiveFileLookup", "true").load(datasets_path)
-    
-    # save list of the files to table
-    write_data_to_delta(df=df, mode='overwrite', external_path=None, table_name=table_name)
+    # Read files
+    raw_df = spark.read.format('binaryfile').option("recursiveFileLookup", "true").load(datasets_path)
+
+    # Save list of files to Delta table
+    write_data_to_delta(df=raw_df, mode='overwrite', external_path=None, table_name=table_name)
+
+    return raw_df
+
+
+# if __name__ == "__main__":
+#     process_pdf_files(datasets_path, catalog_name, bronze_schema_name, pdf_raw_table_name)
