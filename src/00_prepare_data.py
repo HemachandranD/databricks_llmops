@@ -24,11 +24,10 @@ logging.basicConfig(
 # Suppress Py4J logs
 logging.getLogger("py4j").setLevel(logging.WARNING)
 
-# Create logger instance
-logger = logging.getLogger(__name__)
-
 
 if __name__ == "__main__":
+    # Create logger instance
+    logger = logging.getLogger(__name__)
     # Read the PDF files and store them as raw data in a Delta table
     raw_df = process_pdf_files(logger=logger, datasets_path=datasets_path, catalog_name=catalog_name, schema_name=bronze_schema_name, raw_table_name=pdf_raw_table_name)
 

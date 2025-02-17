@@ -192,7 +192,7 @@ def wait_for_vs_endpoint_to_be_ready(vsc, vs_endpoint_name):
         elif "PROVISIONING" in status or i <6:
             if i % 20 == 0: 
                 print(f"Waiting for endpoint to be ready, this can take a few min... {endpoint}")
-                time.sleep(10)
+                time.sleep(30)
             else:
                 raise Exception(f'''Error with the endpoint {vs_endpoint_name}. - this shouldn't happen: {endpoint}.\n Please delete it and re-run the previous cell: vsc.delete_endpoint("{vs_endpoint_name}")''')
     raise Exception(f"Timeout, your endpoint isn't ready yet: {vsc.get_endpoint(vs_endpoint_name)}")

@@ -23,11 +23,10 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"  # Date format
 )
 
-# Create logger instance
-logger = logging.getLogger(__name__)
-
 
 if __name__ == "__main__":
+    # Create logger instance
+    logger = logging.getLogger(__name__)
     vs_endpoint_prefix = "vs_endpoint_"
     vs_endpoint_name = vs_endpoint_prefix+str(vector_search_endpoint_sub_name)
 
