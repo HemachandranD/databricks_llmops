@@ -10,12 +10,12 @@ from mlflow.models import infer_signature
 from datetime import datetime
 import mlflow
 import langchain
-
+import os
 
 from src.modeling.document_retriever import get_retriever
-from src.config.configuration import catalog_name, gold_schema_name, vector_search_endpoint_sub_name, pdf_self_managed_vector_index_name, pdf_managed_vector_index_name, chain_model_name
+from src.config.configuration import catalog_name, gold_schema_name, vector_search_endpoint_sub_name, pdf_self_managed_vector_index_name, pdf_managed_vector_index_name, chain_model_name,llm_endpoint
 
-def save_chain_model(chain, catalog_name, schema_name, chain_model_name, question, answer):
+def save_chain_model(logger, chain, catalog_name, schema_name, chain_model_name, llm_endpoint, resource_index_name, question, answer):
     # set model registry to UC
     mlflow.set_registry_uri("databricks-uc")
     model_name = f"{catalog_name}.{schema_name}.{chain_model_name}"
@@ -24,9 +24,23 @@ def save_chain_model(chain, catalog_name, schema_name, chain_model_name, questio
     t = datetime.now()
     date_now = t.strftime("%Y-%m-%d")
     time_now = t.strftime("%H%M%S")
-    experiment_name = f"/Workspace/Experiments/{date_now}/{time_now}/{chain_model_name}"
-    mlflow.set_experiment(experiment_name)
+    experiment_path = f"/Workspace/Applications/Experiments/{date_now}/{time_now}"
 
+    # End any existing runs (in the case this notebook is being run for a second time)
+    mlflow.end_run()
+    
+    # Create the directory if it does not exist
+    if not os.path.exists(experiment_path):
+        try:
+            os.makedirs(experiment_path)
+            print("Created experiments folder since it doesn't exist", end="\n")
+        except Exception as e:
+            print(f"{str(e)}", end="\n")
+
+    logger.info(f"Setting up the experiment {chain_model_name}")
+    mlflow.set_experiment(f"{experiment_path}/{chain_model_name}")
+
+    logger.info(f"Starting the run {chain_model_name}")
     with mlflow.start_run(run_name=chain_model_name) as run:
         signature = infer_signature(question, answer)
         model_info = mlflow.langchain.log_model(
@@ -42,13 +56,14 @@ def save_chain_model(chain, catalog_name, schema_name, chain_model_name, questio
                 "flashrank==0.2.8",
             ],
             resources=[
-            DatabricksVectorSearchIndex(index_name="hemzai.gold.pdf_text_self_managed_vs_index"),
-            DatabricksServingEndpoint(endpoint_name="databricks-meta-llama-3-1-70b-instruct"),
+            DatabricksVectorSearchIndex(index_name=f"{catalog_name}.{schema_name}.{resource_index_name}"),
+            DatabricksServingEndpoint(endpoint_name=llm_endpoint),
             ],
             input_example=question,
             signature=signature
         )
 
+    logger.info(f"Registered the Model at {model_name}")
     return model_info
 
 
@@ -86,5 +101,4 @@ def unwrap_document(answer):
 #     question = {"input": "How does Generative AI impact humans?"}
 #     answer = chain.invoke(question)
 #     # print(answer)
-#     model_info = save_chain_model(chain=chain, catalog_name=catalog_name, schema_name=gold_schema_name, chain_model_name=chain_model_name, question=question, answer=answer)
-    
+#     model_info = save_chain_model(chain=chain, catalog_name=catalog_name, schema_name=gold_schema_name, chain_model_name=chain_model_name, llm_endpoint=llm_endpoint, resource_index_name=pdf_self_managed_vector_index_name, question=question, answer=answer)
