@@ -1,6 +1,7 @@
 import io
 import time
 import mlflow
+import logging
 from typing import List
 from databricks.sdk.runtime import *
 from pyspark.sql import DataFrame
@@ -16,6 +17,19 @@ from langchain_community.document_loaders import (
 )
 from langchain_core.documents import Document
 from pypdf import PdfReader
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,  # Set the logging level
+    format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
+    datefmt="%Y-%m-%d %H:%M:%S"  # Date format
+)
+
+# Suppress Py4J logs
+logging.getLogger("py4j").setLevel(logging.WARNING)
+
+# Create logger instance
+logger = logging.getLogger(__name__)
 
 # Load Data
 def load_data(file_type: str, file_loc: str) -> List[Document]:
@@ -131,7 +145,7 @@ def write_embedding_data_handler(df_embed, embeddings_fqn):
             schema_name = embeddings_fqn.split(".")[1]
             embed_table_name = embeddings_fqn.split(".")[2]
 
-            spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog_name}")
+            # spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog_name}")
             spark.sql(f"USE CATALOG {catalog_name}")
 
             spark.sql(f"CREATE SCHEMA IF NOT EXISTS {schema_name}")

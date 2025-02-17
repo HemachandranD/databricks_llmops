@@ -11,7 +11,7 @@ from langchain_community.document_loaders import (
     UnstructuredMarkdownLoader,
 )
 from src.common.utility_functions import read_data_handler, write_data_to_delta
-from scr.config.configuration import catalog_name, bronze_schema_name, silver_schema_name, pdf_raw_table_name, pdf_chunks_table_name
+from src.config.configuration import catalog_name, bronze_schema_name, silver_schema_name, pdf_raw_table_name, pdf_chunk_size, pdf_chunks_table_name
 
 # Get a active session
 spark = SparkSession.getActiveSession()
@@ -22,10 +22,10 @@ spark = SparkSession.getActiveSession()
 def read_as_chunk(batch_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:
     # Sentence splitter from llama_index to split on sentences
     splitter = SentenceTransformersTokenTextSplitter(
-            chunk_size=500, chunk_overlap=50)
+            chunk_size=pdf_chunk_size, chunk_overlap=50)
     
-    def extract_and_split(b):
-        loader = PyPDFLoader(b.replace('dbfs:','/dbfs/'))  # Use custom function to parse the bytes pdf
+    def extract_and_split(path):
+        loader = PyPDFLoader(path.replace('dbfs:','/dbfs/'))  # Use custom function to parse the bytes pdf
         data = loader.load()
         if data is None:
             return []

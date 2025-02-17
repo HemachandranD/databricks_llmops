@@ -5,6 +5,7 @@ data_parameters:
   silver_schema_name: silver
   gold_schema_name: gold
   pdf_raw_table_name: pdf_raw_text
+  pdf_chunk_size: 500
   pdf_chunk_table_name: pdf_text_chunks
   pdf_embeddings_table_name: pdf_text_embeddings
   vector_search_endpoint_sub_name: pilot
