@@ -1,3 +1,7 @@
+import os
+import sys
+
+sys.path.append(os.getcwd().rsplit("/src")[0])
 from src.common.utility_functions import index_exists, wait_for_index_to_be_ready
 
 

@@ -1,6 +1,8 @@
 import os
+import sys
 from datetime import datetime
 
+sys.path.append(os.getcwd().rsplit("/src")[0])
 import mlflow
 from langchain.prompts import PromptTemplate
 from mlflow.models import infer_signature

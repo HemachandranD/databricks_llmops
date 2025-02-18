@@ -1,7 +1,7 @@
 import os
+
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.catalog import MonitorInfoStatus, MonitorTimeSeries
-
 
 # Create monitor using databricks-sdk's `quality_monitors` client
 

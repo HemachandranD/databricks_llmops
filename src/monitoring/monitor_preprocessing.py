@@ -1,3 +1,7 @@
+import os
+import sys
+
+sys.path.append(os.getcwd().rsplit("/src")[0])
 from compute_metrics import (
     automated_readability_index,
     compute_num_tokens,

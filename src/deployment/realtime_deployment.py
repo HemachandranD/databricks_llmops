@@ -1,3 +1,7 @@
+import os
+import sys
+
+sys.path.append(os.getcwd().rsplit("/src")[0])
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.serving import EndpointCoreConfigInput
 from pyspark.sql import SparkSession

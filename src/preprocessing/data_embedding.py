@@ -1,7 +1,11 @@
+import os
+import sys
+
 import mlflow.deployments
 import pandas as pd
 from pyspark.sql.functions import pandas_udf
 
+sys.path.append(os.getcwd().rsplit("/src")[0])
 from src.common.utility_functions import read_data_handler, write_embedding_data_handler
 from src.config.configuration import (
     catalog_name,

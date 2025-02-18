@@ -1,5 +1,8 @@
+import os
+import sys
 from typing import Iterator
 
+sys.path.append(os.getcwd().rsplit("/src")[0])
 import pandas as pd
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters.sentence_transformers import (

@@ -1,3 +1,7 @@
+import os
+import sys
+
+sys.path.append(os.getcwd().rsplit("/src")[0])
 from databricks.sdk import WorkspaceClient
 
 from src.config.configuration import serving_endpoint_name

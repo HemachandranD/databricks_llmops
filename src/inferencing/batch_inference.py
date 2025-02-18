@@ -1,5 +1,9 @@
+import os
+import sys
+
 import mlflow
 
+sys.path.append(os.getcwd().rsplit("/src")[0])
 from src.common.utility_functions import set_alias
 from src.config.configuration import catalog_name, chain_model_name, gold_schema_name
 
