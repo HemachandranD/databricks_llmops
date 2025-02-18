@@ -1,6 +1,6 @@
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.catalog import MonitorTimeSeries, MonitorInfoStatus
-from src.config.configuration import catalog_name, schema_name, app_inference_processed_table_name
+from src.config.configuration import catalog_name, gold_schema_name, app_inference_processed_table_name
 
 # Create monitor using databricks-sdk's `quality_monitors` client
 
@@ -18,7 +18,7 @@ def create_lhm_monitor(catalog_name, schema_name, app_inference_processed_table_
             output_schema_name=f"{catalog_name}.{schema_name}"
         )
 
-        monitor_info = w.quality_monitors.get(processed_table_name)
+        monitor_info = w.quality_monitors.get(app_inference_processed_table_name)
 
         if monitor_info.status == MonitorInfoStatus.MONITOR_STATUS_PENDING:
             print("Wait until monitor creation is completed...")
@@ -27,6 +27,6 @@ def create_lhm_monitor(catalog_name, schema_name, app_inference_processed_table_
     print(lhm_exception)
 
 
-if __name__ == "__main__":
-    app_inference_processed_table_name = f"{catalog_name}.{schema_name}.{app_inference_processed_table_name}
-    create_lhm_monitor(catalog_name, schema_name, app_inference_processed_table_name)
+# if __name__ == "__main__":
+#     app_inference_processed_table_name = f"{catalog_name}.{schema_name}.{app_inference_processed_table_name}
+#     create_lhm_monitor(catalog_name, schema_name, app_inference_processed_table_name)

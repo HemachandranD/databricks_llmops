@@ -2,7 +2,7 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda
-from langchain_community.chat_models import ChatDatabricks
+from databricks_langchain import ChatDatabricks
 from mlflow.models.resources import (
     DatabricksVectorSearchIndex,
     DatabricksServingEndpoint,)
@@ -52,8 +52,10 @@ def save_chain_model(logger, chain, catalog_name, schema_name, chain_model_name,
                 "mlflow==" + mlflow.__version__,
                 "langchain==" + langchain.__version__,
                 "langchain-community==0.3.14",
-                "databricks-vectorsearch==0.40",
+                "databricks-vectorsearch==0.49",
                 "flashrank==0.2.8",
+                "databricks-langchain==0.3.0",
+                "sentence-transformers==3.4.1"
             ],
             resources=[
             DatabricksVectorSearchIndex(index_name=f"{catalog_name}.{schema_name}.{resource_index_name}"),

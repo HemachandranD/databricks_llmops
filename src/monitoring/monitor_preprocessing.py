@@ -53,15 +53,15 @@ def create_processed_table_if_not_exists(app_inference_processed_table_name, app
                         .toTable(app_inference_processed_table_name).awaitTermination())
 
 
-if  __name__ == "__main__":
+# if  __name__ == "__main__":
 
-    app_infernece_table_name = f"{catalog_name}.{gold_schema_name}.{app_inference_table_name}"
-    app_inference_processed_table_name = f"{catalog_name}.{gold_schema_name}.{app_inference_processed_table_name}"
-    checkpoint_location =  os.path.join(os.getcwd(), "checkpoint")
+#     app_infernece_table_name = f"{catalog_name}.{gold_schema_name}.{app_inference_table_name}"
+#     app_inference_processed_table_name = f"{catalog_name}.{gold_schema_name}.{app_inference_processed_table_name}"
+#     checkpoint_location =  os.path.join(os.getcwd(), "checkpoint")
 
-    app_inference_processed_df = prepare_data_to_monitor(app_infernece_table_name)
+#     app_inference_processed_df = prepare_data_to_monitor(app_infernece_table_name)
 
-    create_processed_table_if_not_exists(app_inference_processed_table_name, app_inference_processed_df, checkpoint_location)
+#     create_processed_table_if_not_exists(app_inference_processed_table_name, app_inference_processed_df, checkpoint_location)
 
 
     
