@@ -78,10 +78,3 @@ def real_time_deploy(
         w.serving_endpoints.update_config_and_wait(
             served_models=endpoint_config.served_models, name=serving_endpoint_name
         )
-
-
-# if __name__ == "__main__":
-#     model_name = f"{catalog_name}.{gold_schema_name}.{chain_model_name}"
-
-#     latest_model_version, endpoint_config = get_ready_for_realtime_inference(model_name)
-#     real_time_deploy(latest_model_version, endpoint_config)

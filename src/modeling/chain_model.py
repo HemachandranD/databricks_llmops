@@ -105,18 +105,3 @@ def unwrap_document(answer):
             for r in answer["context"]
         ]
     }
-
-
-# if __name__ == "__main__":
-#     vs_endpoint_prefix = "vs_endpoint_"
-#     vs_endpoint_name = vs_endpoint_prefix+str(vector_search_endpoint_sub_name)
-
-#     # test Databricks Foundation LLM model
-#     chat_model = ChatDatabricks(endpoint="databricks-meta-llama-3-1-70b-instruct", max_tokens = 300)
-#     question_answer_chain = create_stuff_documents_chain(chat_model, create_prompt())
-#     chain = create_retrieval_chain(get_retriever(vs_endpoint_name=vs_endpoint_name, vs_index_fullname=f"{catalog_name}.{gold_schema_name}.{pdf_self_managed_vector_index_name}"), question_answer_chain)|RunnableLambda(unwrap_document)
-
-#     question = {"input": "How does Generative AI impact humans?"}
-#     answer = chain.invoke(question)
-#     # print(answer)
-#     model_info = save_chain_model(chain=chain, catalog_name=catalog_name, schema_name=gold_schema_name, chain_model_name=chain_model_name, llm_endpoint=llm_endpoint, resource_index_name=pdf_self_managed_vector_index_name, question=question, answer=answer)

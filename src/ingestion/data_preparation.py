@@ -37,6 +37,3 @@ def process_pdf_files(logger, datasets_path, catalog_name, schema_name, raw_tabl
 
     return raw_df
 
-
-# if __name__ == "__main__":
-#     process_pdf_files(datasets_path, catalog_name, bronze_schema_name, pdf_raw_table_name)

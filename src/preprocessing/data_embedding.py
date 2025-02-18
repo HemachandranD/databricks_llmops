@@ -41,33 +41,3 @@ def get_embedding(contents: pd.Series) -> pd.Series:
 
     return pd.Series(all_embeddings)
 
-
-if __name__ == "__main__":
-    embeddings_fqn = f"{catalog_name}.{gold_schema_name}.{pdf_embeddings_table_name}"
-
-    df_chunks = read_data_handler(
-        format="del_table",
-        schema=None,
-        external_path=None,
-        table_name=f"{catalog_name}.{silver_schema_name}.{pdf_chunks_table_name}",
-    )
-
-    df_embed = df_chunks.withColumn("embedding", get_embedding("content")).selectExpr(
-        "pdf_name", "content", "embedding"
-    )
-
-    # if not (spark.catalog.tableExists(embed_table_name)):
-    #     # Define the schema for the table
-    #     schema = StructType([
-    #         StructField("id", LongType(), True),  # Will be generated as IDENTITY
-    #         StructField("pdf_name", StringType(), True),
-    #         StructField("content", StringType(), True),
-    #         StructField("embedding", ArrayType(FloatType()), True)
-    #     ])
-
-    #     # Create an empty DataFrame with the schema
-    #     empty_df = spark.createDataFrame([], schema)
-
-    #     write_data_with_cdc(empty_df, mode='append', external_path=None, table_name=embeddings_fqn)
-
-    write_embedding_data_handler(df_embed, embeddings_fqn)
