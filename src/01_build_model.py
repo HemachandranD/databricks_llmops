@@ -10,7 +10,7 @@ from databricks.vector_search.client import VectorSearchClient
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.runnables import RunnableLambda
-from langchain_databricks import ChatDatabricks
+from langchain_community.chat_models import ChatDatabricks
 from src.modeling.chain_model import save_chain_model, create_prompt, unwrap_document
 from src.modeling.document_retriever import get_retriever
 from src.common.utility_functions import read_data_handler, write_data_to_delta, write_data_with_cdc, write_embedding_data_handler, index_exists, wait_for_vs_endpoint_to_be_ready, wait_for_index_to_be_ready

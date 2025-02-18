@@ -1,5 +1,5 @@
 from databricks.vector_search.client import VectorSearchClient
-from databricks_langchain import DatabricksEmbeddings
+from langchain_community.embeddings import DatabricksEmbeddings
 from langchain_core.runnables import RunnableLambda
 from langchain.docstore.document import Document
 from flashrank import Ranker, RerankRequest

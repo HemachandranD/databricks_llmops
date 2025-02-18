@@ -29,5 +29,6 @@ if __name__ == "__main__":
 
     logger.info(f"Getting the model {model_full_name} ready for Realtime Deployment")
     latest_model_version, endpoint_config = get_ready_for_realtime_inference(model_full_name)
+    
     logger.info(f"Deploying the model {model_full_name} for Serving Endpoint")
     real_time_deploy(logger, serving_endpoint_name, latest_model_version, endpoint_config)
