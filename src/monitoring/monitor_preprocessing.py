@@ -10,6 +10,7 @@ from compute_metrics import (
     flesch_kincaid_grade,
 )
 from delta.tables import DeltaTable
+from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 
 from src.common.utility_functions import unpack_requests
@@ -20,6 +21,9 @@ from src.config.configuration import (
     output_json_path_type,
     output_request_json_path,
 )
+
+# Get a active session
+spark = SparkSession.getActiveSession()
 
 
 def prepare_data_to_monitor(
