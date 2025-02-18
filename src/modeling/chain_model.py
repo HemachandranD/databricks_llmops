@@ -1,21 +1,28 @@
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.prompts import PromptTemplate
-from langchain_core.runnables import RunnableLambda
-from langchain_community.chat_models import ChatDatabricks
-from mlflow.models.resources import (
-    DatabricksVectorSearchIndex,
-    DatabricksServingEndpoint,)
-from mlflow.models import infer_signature
-from datetime import datetime
-import mlflow
-import langchain
 import os
+from datetime import datetime
+
+import mlflow
+from langchain.prompts import PromptTemplate
+from mlflow.models import infer_signature
+from mlflow.models.resources import (
+    DatabricksServingEndpoint,
+    DatabricksVectorSearchIndex,
+)
 
 from src.modeling.document_retriever import get_retriever
-from src.config.configuration import catalog_name, gold_schema_name, vector_search_endpoint_sub_name, pdf_self_managed_vector_index_name, pdf_managed_vector_index_name, chain_model_name,llm_endpoint
 
-def save_chain_model(logger, chain, catalog_name, schema_name, chain_model_name, llm_endpoint, resource_index_name, question, answer):
+
+def save_chain_model(
+    logger,
+    chain,
+    catalog_name,
+    schema_name,
+    chain_model_name,
+    llm_endpoint,
+    resource_index_name,
+    question,
+    answer,
+):
     # set model registry to UC
     mlflow.set_registry_uri("databricks-uc")
     model_name = f"{catalog_name}.{schema_name}.{chain_model_name}"
@@ -28,7 +35,7 @@ def save_chain_model(logger, chain, catalog_name, schema_name, chain_model_name,
 
     # End any existing runs (in the case this notebook is being run for a second time)
     mlflow.end_run()
-    
+
     # Create the directory if it does not exist
     if not os.path.exists(experiment_path):
         try:
@@ -45,7 +52,7 @@ def save_chain_model(logger, chain, catalog_name, schema_name, chain_model_name,
         signature = infer_signature(question, answer)
         model_info = mlflow.langchain.log_model(
             chain,
-            loader_fn=get_retriever, 
+            loader_fn=get_retriever,
             artifact_path="chain",
             registered_model_name=model_name,
             pip_requirements=[
@@ -55,14 +62,16 @@ def save_chain_model(logger, chain, catalog_name, schema_name, chain_model_name,
                 "databricks-vectorsearch==0.49",
                 "flashrank==0.2.8",
                 "databricks-langchain==0.3.0",
-                "sentence-transformers==3.4.1"
+                "sentence-transformers==3.4.1",
             ],
             resources=[
-            DatabricksVectorSearchIndex(index_name=f"{catalog_name}.{schema_name}.{resource_index_name}"),
-            DatabricksServingEndpoint(endpoint_name=llm_endpoint),
+                DatabricksVectorSearchIndex(
+                    index_name=f"{catalog_name}.{schema_name}.{resource_index_name}"
+                ),
+                DatabricksServingEndpoint(endpoint_name=llm_endpoint),
             ],
             input_example=question,
-            signature=signature
+            signature=signature,
         )
 
     logger.info(f"Registered the Model at {model_name}")
@@ -84,11 +93,16 @@ def create_prompt():
     prompt = PromptTemplate(template=TEMPLATE, input_variables=["context", "input"])
 
     return prompt
-    
+
 
 # unwrap the longchain document from the context to be a dict so we can register the signature in mlflow
 def unwrap_document(answer):
-  return answer | {"context": [{"metadata": r.metadata, "page_content": r.page_content} for r in answer["context"]]}
+    return answer | {
+        "context": [
+            {"metadata": r.metadata, "page_content": r.page_content}
+            for r in answer["context"]
+        ]
+    }
 
 
 # if __name__ == "__main__":

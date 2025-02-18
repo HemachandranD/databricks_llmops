@@ -1,6 +1,7 @@
 import mlflow
-from src.config.configuration import catalog_name, gold_schema_name, chain_model_name
+
 from src.common.utility_functions import set_alias
+from src.config.configuration import catalog_name, chain_model_name, gold_schema_name
 
 
 def get_ready_for_batch_inference(model_name):
