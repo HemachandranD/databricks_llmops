@@ -19,7 +19,7 @@ def load_endpoint_config(
                     # "DATABRICKS_TOKEN": "{{{{secrets/{0}/depl_demo_token}}}}".format(scope_name),
                     # "DATABRICKS_HOST": "{{{{secrets/{0}/depl_demo_host}}}}".format(scope_name),
                     "DATABRICKS_TOKEN": "",
-                    "DATABRICKS_HOST": "https://dbc-434c5869-d401.cloud.databricks.com/",
+                    "DATABRICKS_HOST": "https://dbc-3c6d6b17-da55.cloud.databricks.com/",
                 },
             },
         ],

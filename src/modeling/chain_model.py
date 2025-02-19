@@ -2,8 +2,9 @@ import os
 import sys
 from datetime import datetime
 
-sys.path.append(os.getcwd().rsplit("/src")[0])
 import mlflow
+import langchain
+sys.path.append(os.getcwd().rsplit("/src")[0])
 from langchain.prompts import PromptTemplate
 from mlflow.models import infer_signature
 from mlflow.models.resources import (
@@ -58,14 +59,13 @@ def save_chain_model(
             artifact_path="chain",
             registered_model_name=model_name,
             pip_requirements=[
-                "mlflow==2.20.2",
-                "langchain==0.3.18",
-                "langchain-community==0.3.17",
-                "databricks-vectorsearch==0.49",
+                "mlflow==" + mlflow.__version__,
+                "langchain==" + langchain.__version__,
+                "langchain-community==0.3.14",
+                "databricks-vectorsearch==0.40",
                 "flashrank==0.2.8",
-                "databricks-langchain==0.3.0",
-                "sentence-transformers==3.4.1",
             ],
+            code_paths=[f"{os.getcwd().rsplit('/src')[0]}/src"],
             resources=[
                 DatabricksVectorSearchIndex(
                     index_name=f"{catalog_name}.{schema_name}.{resource_index_name}"
@@ -77,6 +77,10 @@ def save_chain_model(
         )
 
     logger.info(f"Registered the Model at {model_name}")
+
+    logger.info(f"Ending the Model {chain_model_name} run")
+    # End any existing runs (in the case this notebook is being run for a second time)
+    mlflow.end_run()
     return model_info
 
 

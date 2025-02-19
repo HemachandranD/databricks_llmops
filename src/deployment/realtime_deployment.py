@@ -78,3 +78,4 @@ def real_time_deploy(
         w.serving_endpoints.update_config_and_wait(
             served_models=endpoint_config.served_models, name=serving_endpoint_name
         )
+

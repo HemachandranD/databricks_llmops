@@ -24,11 +24,14 @@ from src.config.configuration import (
 from src.modeling.chain_model import create_prompt, save_chain_model, unwrap_document
 from src.modeling.document_retriever import get_retriever
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,  # Set the logging level
     format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
     datefmt="%Y-%m-%d %H:%M:%S",  # Date format
+    stream=sys.stdout,  # Redirect logs to stdout
 )
 
 # Suppress Py4J logs

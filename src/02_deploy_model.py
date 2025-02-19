@@ -24,6 +24,7 @@ logging.basicConfig(
     level=logging.INFO,  # Set the logging level
     format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
     datefmt="%Y-%m-%d %H:%M:%S",  # Date format
+    stream=sys.stdout,  # Redirect logs to stdout
 )
 
 # Suppress Py4J logs
