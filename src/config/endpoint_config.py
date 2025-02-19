@@ -1,7 +1,7 @@
 def load_endpoint_config(
     catalog_name,
     gold_schema_name,
-    app_inference_table_name,
+    app_inference_table_name_prefix,
     model_name,
     latest_model_version,
     scope_name,
@@ -26,7 +26,7 @@ def load_endpoint_config(
         "auto_capture_config": {
             "catalog_name": catalog_name,
             "schema_name": gold_schema_name,
-            "table_name_prefix": app_inference_table_name,
+            "table_name_prefix": app_inference_table_name_prefix,
         },
     }
 

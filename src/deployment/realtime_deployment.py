@@ -8,7 +8,7 @@ from pyspark.sql import SparkSession
 
 from src.common.utility_functions import set_alias
 from src.config.configuration import (
-    app_inference_table_name,
+    app_inference_table_name_prefix,
     catalog_name,
     gold_schema_name,
     scope_name,
@@ -30,7 +30,7 @@ def get_ready_for_realtime_inference(model_name):
     endpoint_config_dict = load_endpoint_config(
         catalog_name,
         gold_schema_name,
-        app_inference_table_name,
+        app_inference_table_name_prefix,
         model_name,
         latest_model_version,
         scope_name,

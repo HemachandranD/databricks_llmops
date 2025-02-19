@@ -15,7 +15,7 @@ data_parameters:
   llm_endpoint: databricks-meta-llama-3-1-70b-instruct
   scope_name: hemzai_scope
   serving_endpoint_name: hemzai_pilot_endpoint
-  app_inference_table_name: rag_app_realtime_payload
+  app_inference_table_name_prefix: rag_app_realtime
   app_inference_processed_table_name: rag_app_metrics_realtime
   # The format of the input payloads, following the TF "inputs" serving format with a "query" field.
   # Single query input format: {"inputs": [{"query": "User question?"}]}

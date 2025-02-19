@@ -2,7 +2,7 @@ import os
 import sys
 
 sys.path.append(os.getcwd().rsplit("/src")[0])
-from compute_metrics import (
+from src.monitoring.compute_metrics import (
     automated_readability_index,
     compute_num_tokens,
     compute_perplexity,
@@ -27,12 +27,12 @@ spark = SparkSession.getActiveSession()
 
 
 def prepare_data_to_monitor(
-    app_inference_table_name, column_to_measure=["input", "output"]
+    app_infernece_table_full_name, column_to_measure=["input", "output"]
 ):
     # Unpack using provided helper function
     app_inference_df = (
         spark.readStream.option("ignoreDeletes", "true")
-        .table(app_inference_table_name)
+        .table(app_infernece_table_full_name)
         .where("status_code == 200")
         .limit(10)
     )
@@ -105,7 +105,7 @@ def create_processed_table_if_not_exists(
 
 # if  __name__ == "__main__":
 
-#     app_infernece_table_name = f"{catalog_name}.{gold_schema_name}.{app_inference_table_name}"
+#     app_infernece_table_name = f"{catalog_name}.{gold_schema_name}.{app_infernece_table_full_name}"
 #     app_inference_processed_table_name = f"{catalog_name}.{gold_schema_name}.{app_inference_processed_table_name}"
 #     checkpoint_location =  os.path.join(os.getcwd(), "checkpoint")
 

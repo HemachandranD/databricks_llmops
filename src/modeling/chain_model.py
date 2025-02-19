@@ -65,7 +65,7 @@ def save_chain_model(
                 "databricks-vectorsearch==0.40",
                 "flashrank==0.2.8",
             ],
-            code_paths=[f"{os.getcwd().rsplit('/src')[0]}/src"],
+            code_paths=[f"{os.getcwd().rsplit('/src')[0]}/src"], # Packaging the codes
             resources=[
                 DatabricksVectorSearchIndex(
                     index_name=f"{catalog_name}.{schema_name}.{resource_index_name}"
