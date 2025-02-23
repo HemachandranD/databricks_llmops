@@ -28,7 +28,10 @@ logging.basicConfig(
 )
 
 # Suppress Py4J logs
+# Suppress Py4J logs
 logging.getLogger("py4j").setLevel(logging.WARNING)
+logging.getLogger("py4j").setLevel(logging.ERROR)
+logging.getLogger("py4j").setLevel(logging.INFO)
 
 # Create logger instance
 logger = logging.getLogger(__name__)

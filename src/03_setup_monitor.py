@@ -61,6 +61,6 @@ if __name__ == "__main__":
     logger.info(
         f"Setting up the Lakehouse Monitoring from the {app_inference_processed_table_name}"
     )
-    create_lhm_monitor(
-        catalog_name, gold_schema_name, app_inference_processed_table_name
-    )
+    # create_lhm_monitor(
+    #     catalog_name, gold_schema_name, app_inference_processed_table_name
+    # )

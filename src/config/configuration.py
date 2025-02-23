@@ -7,8 +7,8 @@ varaiable_yaml_path = f"{os.path.dirname(os.path.abspath(__file__))}/variables.y
 with open(varaiable_yaml_path, "r") as file:
     config = yaml.safe_load(file)
 
-# Extract data parameters
-data_params = config.get("data_parameters", {})
+# Extract project parameters
+project_parameters = config.get("project_parameters", {})
 
 
 # Subscribe variables using dictionary unpacking
@@ -37,7 +37,7 @@ data_params = config.get("data_parameters", {})
     output_json_path_type,
     keep_last_question_only,
 ) = (
-    data_params.get(key)
+    project_parameters.get(key)
     for key in [
         "datasets_path",
         "catalog_name",

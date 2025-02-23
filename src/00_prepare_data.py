@@ -43,6 +43,8 @@ logging.basicConfig(
 
 # Suppress Py4J logs
 logging.getLogger("py4j").setLevel(logging.WARNING)
+logging.getLogger("py4j").setLevel(logging.ERROR)
+logging.getLogger("py4j").setLevel(logging.INFO)
 
 # Create logger instance
 logger = logging.getLogger(__name__)
@@ -112,7 +114,7 @@ if __name__ == "__main__":
         f"{catalog_name}.{gold_schema_name}.{pdf_embeddings_table_name}"
     )
 
-    # the table t to store index
+    # the table to store index
     vs_index_fullname = (
         f"{catalog_name}.{gold_schema_name}.{pdf_self_managed_vector_index_name}"
     )
